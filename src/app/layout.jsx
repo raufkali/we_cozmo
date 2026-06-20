@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import AOS from "aos";
 import { CartProvider } from "@/context/CartContext";
 import LayoutWrapper from "@/components/LayoutWrapper";
+import SmoothScrollProvider from "@/components/SmoothScroll";
 
 export default function RootLayout({ children }) {
   useEffect(() => {
@@ -36,7 +37,9 @@ export default function RootLayout({ children }) {
       </head>
       <body suppressHydrationWarning>
         <CartProvider>
-          <LayoutWrapper>{children}</LayoutWrapper>
+          <LayoutWrapper>
+            <SmoothScrollProvider>{children}</SmoothScrollProvider>
+          </LayoutWrapper>
         </CartProvider>
       </body>
     </html>

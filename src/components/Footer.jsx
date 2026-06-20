@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="row g-4">
           <div className="col-lg-4">
             <span className="footer-brand">{brandName}</span>
-            <p>
+            <p className="text-white">
               Your trusted source for authentic makeup and skincare products in
               Pakistan.
             </p>
@@ -50,12 +50,12 @@ export default function Footer() {
 
           <div className="col-lg-4 col-md-4">
             <h6>Contact</h6>
-            <p>
+            <p className="text-white">
               <i className="fas fa-envelope me-2"></i> {email}
             </p>
-            <p>
+            {/* <p className="text-white">
               <i className="fas fa-phone me-2"></i> {phone}
-            </p>
+            </p> */}
             <div className="footer-newsletter mt-3">
               <div className="input-group">
                 <input
