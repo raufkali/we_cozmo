@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import { useState } from "react";
 
@@ -13,7 +14,7 @@ export default function ProductModal({ product, onClose }) {
     <div
       className="modal d-block product-modal"
       tabIndex="-1"
-      style={{ background: "rgba(0,0,0,0.5)" }}
+      style={{ background: "rgba(0,0,0,0.5)", zIndex: 1060 }}
       onClick={onClose}
     >
       <div
@@ -32,11 +33,17 @@ export default function ProductModal({ product, onClose }) {
           <div className="modal-body">
             <div className="row">
               <div className="col-md-6">
-                <img
-                  src={product.image || "https://via.placeholder.com/400x400"}
-                  alt={product.name}
-                  className="product-modal-image"
-                />
+                <div className="position-relative" style={{ height: "350px" }}>
+                  <Image
+                    src={product.image || "/images/placeholder.jpg"}
+                    alt={product.name}
+                    fill
+                    className="product-modal-image"
+                    style={{ objectFit: "contain" }}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority
+                  />
+                </div>
               </div>
               <div className="col-md-6">
                 <span className="badge bg-secondary mb-2">

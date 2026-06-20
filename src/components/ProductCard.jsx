@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 
 export default function ProductCard({ product, onQuickView }) {
@@ -10,14 +11,17 @@ export default function ProductCard({ product, onQuickView }) {
       className="card product-card h-100"
       onClick={() => onQuickView?.(product)}
     >
-      <img
-        src={
-          product.image ||
-          "https://via.placeholder.com/300x300/f5e8e8/8b0000?text=Product"
-        }
-        className="card-img-top"
-        alt={product.name}
-      />
+      <div className="position-relative" style={{ height: "200px" }}>
+        <Image
+          src={product.image || "/images/placeholder.jpg"}
+          alt={product.name || "Product"}
+          fill
+          className="card-img-top"
+          style={{ objectFit: "cover" }}
+          sizes="(max-width: 576px) 50vw, (max-width: 992px) 33vw, 25vw"
+          priority={false}
+        />
+      </div>
       <div className="card-body">
         <h5 className="card-title">{product.name}</h5>
         <p className="card-text text-muted small">

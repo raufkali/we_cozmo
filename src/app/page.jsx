@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import Image from "next/image";
 import { products } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import ProductCard from "@/components/ProductCard";
@@ -119,6 +120,18 @@ export default function HomePage() {
 
   return (
     <>
+      {/* Ticker */}
+      <div className="ticker-wrap">
+        <div className="ticker-track">
+          {[...TICKER_ITEMS, ...TICKER_ITEMS].map((text, i) => (
+            <span key={i} className="ticker-item">
+              {text}
+              <span className="ticker-dot" />
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* Hero Carousel */}
       <div
         id="heroCarousel"
@@ -143,14 +156,20 @@ export default function HomePage() {
               key={slide.id}
               className={`carousel-item${idx === currentSlide ? " active" : ""}`}
             >
-              <img
+              <Image
                 src={slide.image}
-                className="d-block w-100"
                 alt={slide.title}
+                fill
+                className="d-block w-100"
+                style={{ objectFit: "cover" }}
+                sizes="(max-width: 768px) 100vw, 80vw"
+                priority={idx === 0}
                 onError={(e) => {
                   e.target.style.display = "none";
-                  e.target.parentElement.style.background =
-                    "linear-gradient(135deg, #8b0000, #c0392b)";
+                  if (e.target.parentElement) {
+                    e.target.parentElement.style.background =
+                      "linear-gradient(135deg, #8b0000, #c0392b)";
+                  }
                 }}
               />
               <div className="carousel-caption">
@@ -190,19 +209,7 @@ export default function HomePage() {
         </button>
       </div>
 
-      {/* Ticker */}
-      <div className="ticker-wrap">
-        <div className="ticker-track">
-          {[...TICKER_ITEMS, ...TICKER_ITEMS].map((text, i) => (
-            <span key={i} className="ticker-item">
-              {text}
-              <span className="ticker-dot" />
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Categories with Images */}
+      {/* Categories with Next Image */}
       <section id="categories" className="categories-section">
         <div className="container">
           <div className="section-header centered">
@@ -224,14 +231,12 @@ export default function HomePage() {
                 }}
               >
                 <div className="category-image-wrapper">
-                  <img
+                  <Image
                     src={cat.image}
                     alt={cat.name}
-                    onError={(e) => {
-                      e.target.src =
-                        "https://via.placeholder.com/400x400/8b0000/ffffff?text=" +
-                        cat.name;
-                    }}
+                    fill
+                    style={{ objectFit: "cover" }}
+                    sizes="(max-width: 576px) 50vw, 25vw"
                   />
                   <div className="category-overlay">
                     <h3 className="category-name">{cat.name}</h3>

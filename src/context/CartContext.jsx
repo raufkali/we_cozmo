@@ -18,6 +18,7 @@ export const useCart = () => {
       addToCart: () => {},
       removeFromCart: () => {},
       updateQuantity: () => {},
+      clearCart: () => {},
       getCartTotal: () => 0,
       getCartCount: () => 0,
       isOpen: false,
@@ -37,60 +38,84 @@ export const CartProvider = ({ children }) => {
     setMounted(true);
     try {
       const stored = localStorage.getItem("wecozmo_cart");
-      if (stored) setCartItems(JSON.parse(stored));
-    } catch {}
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          setCartItems(parsed);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load cart:", error);
+    }
   }, []);
 
   useEffect(() => {
-    if (mounted)
-      localStorage.setItem("wecozmo_cart", JSON.stringify(cartItems));
+    if (mounted) {
+      try {
+        localStorage.setItem("wecozmo_cart", JSON.stringify(cartItems));
+      } catch (error) {
+        console.error("Failed to save cart:", error);
+      }
+    }
   }, [cartItems, mounted]);
 
   const addToCart = useCallback((product, quantity = 1) => {
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
-      if (existing)
+      if (existing) {
         return prev.map((item) =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + quantity }
             : item,
         );
+      }
       return [...prev, { ...product, quantity }];
     });
     setIsOpen(true);
   }, []);
 
-  const removeFromCart = useCallback(
-    (id) => setCartItems((prev) => prev.filter((item) => item.id !== id)),
-    [],
-  );
-  const updateQuantity = useCallback(
-    (id, qty) => {
-      if (qty <= 0) {
-        removeFromCart(id);
-        return;
-      }
-      setCartItems((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, quantity: qty } : item,
-        ),
-      );
-    },
-    [removeFromCart],
-  );
+  const removeFromCart = useCallback((id) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  }, []);
 
-  const getCartTotal = useCallback(
-    () => cartItems.reduce((t, i) => t + i.price * i.quantity, 0),
-    [cartItems],
-  );
-  const getCartCount = useCallback(
-    () => cartItems.reduce((c, i) => c + i.quantity, 0),
-    [cartItems],
-  );
+  const updateQuantity = useCallback((id, newQty) => {
+    if (newQty <= 0) {
+      setCartItems((prev) => prev.filter((item) => item.id !== id));
+      return;
+    }
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: newQty } : item,
+      ),
+    );
+  }, []);
+
+  const clearCart = useCallback(() => {
+    setCartItems([]);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("wecozmo_cart");
+    }
+  }, []);
+
+  const getCartTotal = useCallback(() => {
+    if (!cartItems || cartItems.length === 0) return 0;
+    return cartItems.reduce(
+      (total, item) => total + (item.price || 0) * (item.quantity || 0),
+      0,
+    );
+  }, [cartItems]);
+
+  const getCartCount = useCallback(() => {
+    if (!cartItems || cartItems.length === 0) return 0;
+    return cartItems.reduce((count, item) => count + (item.quantity || 0), 0);
+  }, [cartItems]);
+
   const openCart = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);
 
-  if (!mounted) return <>{children}</>;
+  if (!mounted) {
+    return <>{children}</>;
+  }
 
   return (
     <CartContext.Provider
@@ -99,6 +124,7 @@ export const CartProvider = ({ children }) => {
         addToCart,
         removeFromCart,
         updateQuantity,
+        clearCart,
         getCartTotal,
         getCartCount,
         isOpen,
