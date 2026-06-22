@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
-import { products } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import ProductCard from "@/components/ProductCard";
 import ProductModal from "@/components/ProductModal";
@@ -10,6 +9,10 @@ import ProductModal from "@/components/ProductModal";
 export default function HomePage() {
   const { addToCart } = useCart();
 
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [banners, setBanners] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -21,33 +24,6 @@ export default function HomePage() {
     message: "",
   });
 
-  const heroSlides = [
-    {
-      id: 1,
-      image: "/images/banners/banner1.jpg",
-      title: "Summer Glow",
-      subtitle: "Up to 30% off on skincare essentials",
-      cta: "Shop Now",
-      category: "Skincare",
-    },
-    {
-      id: 2,
-      image: "/images/banners/banner2.jpg",
-      title: "New Arrivals",
-      subtitle: "Explore the latest makeup collection",
-      cta: "Discover",
-      category: "Makeup",
-    },
-    {
-      id: 3,
-      image: "/images/banners/banner3.jpg",
-      title: "Luxury Fragrance",
-      subtitle: "Limited time offers",
-      cta: "Grab Deal",
-      category: "Fragrance",
-    },
-  ];
-
   const TICKER_ITEMS = [
     "✦ Free delivery on orders above Rs. 2,000",
     "✦ 100% Original Products",
@@ -57,23 +33,58 @@ export default function HomePage() {
     "✦ Luxury Skincare from Rs. 599",
   ];
 
-  const categories = [
-    { name: "Makeup", image: "/images/categories/makeup.jpg" },
-    { name: "Skincare", image: "/images/categories/skincare.jpg" },
-    { name: "Fragrance", image: "/images/categories/fregrence.jpg" },
-    { name: "Hair Care", image: "/images/categories/haircare.jpg" },
-  ];
-
+  // Fetch all data from Firebase
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [productsRes, categoriesRes, bannersRes] = await Promise.all([
+          fetch("/api/products"),
+          fetch("/api/categories"),
+          fetch("/api/banners"),
+        ]);
+        const productsData = await productsRes.json();
+        const categoriesData = await categoriesRes.json();
+        const bannersData = await bannersRes.json();
+
+        setProducts(Array.isArray(productsData) ? productsData : []);
+        setCategories(Array.isArray(categoriesData) ? categoriesData : []);
+        setBanners(Array.isArray(bannersData) ? bannersData : []);
+      } catch (err) {
+        console.error("Failed to load data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // Carousel auto-slide
+  useEffect(() => {
+    if (banners.length === 0) return;
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+      setCurrentSlide((prev) => (prev + 1) % banners.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [banners.length]);
+
+  // Track product view when modal opens
+  const handleQuickView = (product) => {
+    setSelectedProduct(product);
+    fetch("/api/analytics", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        event: "product_view",
+        productId: product.id,
+        productName: product.name,
+        price: product.price,
+      }),
+    }).catch(() => {});
+  };
 
   const allCategories = useMemo(
     () => ["All", ...new Set(products.map((p) => p.category))],
-    [],
+    [products],
   );
 
   const filteredProducts = useMemo(() => {
@@ -91,7 +102,7 @@ export default function HomePage() {
       );
     }
     return list;
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, products]);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -118,6 +129,24 @@ export default function HomePage() {
     setContactForm({ name: "", email: "", message: "" });
   };
 
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "60vh",
+          fontFamily: "var(--font-body)",
+          color: "var(--text-muted)",
+          fontSize: "1rem",
+        }}
+      >
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Ticker */}
@@ -133,120 +162,122 @@ export default function HomePage() {
       </div>
 
       {/* Hero Carousel */}
-      <div
-        id="heroCarousel"
-        className="carousel slide hero-carousel"
-        data-bs-ride="carousel"
-      >
-        <div className="carousel-indicators">
-          {heroSlides.map((_, idx) => (
-            <button
-              key={idx}
-              type="button"
-              data-bs-target="#heroCarousel"
-              data-bs-slide-to={idx}
-              className={idx === currentSlide ? "active" : ""}
-              onClick={() => setCurrentSlide(idx)}
-            />
-          ))}
-        </div>
-        <div className="carousel-inner">
-          {heroSlides.map((slide, idx) => (
-            <div
-              key={slide.id}
-              className={`carousel-item${idx === currentSlide ? " active" : ""}`}
-            >
-              <Image
-                src={slide.image}
-                alt={slide.title}
-                fill
-                className="d-block w-100"
-                style={{ objectFit: "cover" }}
-                sizes="(max-width: 768px) 100vw, 80vw"
-                priority={idx === 0}
-                onError={(e) => {
-                  e.target.style.display = "none";
-                  if (e.target.parentElement) {
-                    e.target.parentElement.style.background =
-                      "linear-gradient(135deg, #8b0000, #c0392b)";
-                  }
-                }}
+      {banners.length > 0 && (
+        <div
+          id="heroCarousel"
+          className="carousel slide hero-carousel"
+          data-bs-ride="carousel"
+        >
+          <div className="carousel-indicators">
+            {banners.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                data-bs-target="#heroCarousel"
+                data-bs-slide-to={idx}
+                className={idx === currentSlide ? "active" : ""}
+                onClick={() => setCurrentSlide(idx)}
               />
-              <div className="carousel-caption">
-                <h3>{slide.title}</h3>
-                <p>{slide.subtitle}</p>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => handleSlideCTA(slide.category)}
-                >
-                  {slide.cta}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-        <button
-          className="carousel-control-prev"
-          type="button"
-          data-bs-target="#heroCarousel"
-          data-bs-slide="prev"
-          onClick={() =>
-            setCurrentSlide(
-              (p) => (p - 1 + heroSlides.length) % heroSlides.length,
-            )
-          }
-        >
-          <span className="carousel-control-prev-icon"></span>
-        </button>
-        <button
-          className="carousel-control-next"
-          type="button"
-          data-bs-target="#heroCarousel"
-          data-bs-slide="next"
-          onClick={() => setCurrentSlide((p) => (p + 1) % heroSlides.length)}
-        >
-          <span className="carousel-control-next-icon"></span>
-        </button>
-      </div>
-
-      {/* Categories with Next Image */}
-      <section id="categories" className="categories-section">
-        <div className="container">
-          <div className="section-header centered">
-            <span className="section-label">Browse By</span>
-            <h2 className="section-title">Categories</h2>
-            <p className="section-subtitle">
-              Find your perfect beauty essentials
-            </p>
-          </div>
-          <div className="categories-grid">
-            {categories.map((cat) => (
-              <a
-                key={cat.name}
-                href="#products"
-                className="category-card"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleCategoryClick(cat.name);
-                }}
-              >
-                <div className="category-image-wrapper">
-                  <Image
-                    src={cat.image}
-                    alt={cat.name}
-                    fill
-                    style={{ objectFit: "cover" }}
-                    sizes="(max-width: 576px) 50vw, 25vw"
-                  />
-                  <div className="category-overlay">
-                    <h3 className="category-name">{cat.name}</h3>
-                  </div>
-                </div>
-              </a>
             ))}
           </div>
+          <div className="carousel-inner">
+            {banners.map((banner, idx) => (
+              <div
+                key={banner.id}
+                className={`carousel-item${idx === currentSlide ? " active" : ""}`}
+              >
+                <Image
+                  src={banner.image}
+                  alt={banner.title}
+                  fill
+                  className="d-block w-100"
+                  style={{ objectFit: "cover" }}
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                  priority={idx === 0}
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    if (e.target.parentElement) {
+                      e.target.parentElement.style.background =
+                        "linear-gradient(135deg, #8b0000, #c0392b)";
+                    }
+                  }}
+                />
+                <div className="carousel-caption">
+                  <h3>{banner.title}</h3>
+                  <p>{banner.subtitle}</p>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleSlideCTA(banner.category)}
+                  >
+                    {banner.cta}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button
+            className="carousel-control-prev"
+            type="button"
+            data-bs-target="#heroCarousel"
+            data-bs-slide="prev"
+            onClick={() =>
+              setCurrentSlide((p) => (p - 1 + banners.length) % banners.length)
+            }
+          >
+            <span className="carousel-control-prev-icon"></span>
+          </button>
+          <button
+            className="carousel-control-next"
+            type="button"
+            data-bs-target="#heroCarousel"
+            data-bs-slide="next"
+            onClick={() => setCurrentSlide((p) => (p + 1) % banners.length)}
+          >
+            <span className="carousel-control-next-icon"></span>
+          </button>
         </div>
-      </section>
+      )}
+
+      {/* Categories */}
+      {categories.length > 0 && (
+        <section id="categories" className="categories-section">
+          <div className="container">
+            <div className="section-header centered">
+              <span className="section-label">Browse By</span>
+              <h2 className="section-title">Categories</h2>
+              <p className="section-subtitle">
+                Find your perfect beauty essentials
+              </p>
+            </div>
+            <div className="categories-grid">
+              {categories.map((cat) => (
+                <a
+                  key={cat.id}
+                  href="#products"
+                  className="category-card"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleCategoryClick(cat.name);
+                  }}
+                >
+                  <div className="category-image-wrapper">
+                    <Image
+                      src={cat.image}
+                      alt={cat.name}
+                      fill
+                      style={{ objectFit: "cover" }}
+                      sizes="(max-width: 576px) 50vw, 25vw"
+                    />
+                    <div className="category-overlay">
+                      <h3 className="category-name">{cat.name}</h3>
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Products */}
       <section id="products" className="products-section">
@@ -290,7 +321,7 @@ export default function HomePage() {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  onQuickView={setSelectedProduct}
+                  onQuickView={handleQuickView}
                 />
               ))}
             </div>

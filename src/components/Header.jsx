@@ -41,6 +41,9 @@ export default function Header() {
                 <span className="cart-badge">{cartCount}</span>
               )}
             </button>
+            {/* <a href="/admin" className="admin-header-btn">
+              <i className="fas fa-user-shield"></i>
+            </a> */}
             <button
               className="navbar-toggler"
               onClick={() => setMenuOpen(!menuOpen)}

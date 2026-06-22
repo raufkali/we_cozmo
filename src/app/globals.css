@@ -54,6 +54,32 @@ html {
   padding: 0;
 }
 
+/* ── Admin Header Button ─────────────────────────────── */
+.admin-header-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(139, 0, 0, 0.2);
+  background: transparent;
+  color: var(--crimson-mid);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-decoration: none;
+  margin-left: 8px;
+}
+
+.admin-header-btn:hover {
+  background: var(--grad-primary);
+  color: #fff;
+  border-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.25);
+}
+
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;

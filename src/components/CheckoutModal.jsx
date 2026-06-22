@@ -36,61 +36,37 @@ export default function CheckoutModal({ onClose, closeCart }) {
     setError("");
 
     try {
-      const itemsList = cartItems
-        .map(
-          (item, index) =>
-            `${index + 1}. ${item.name} x${item.quantity} - Rs. ${((item.price || 0) * (item.quantity || 1)).toFixed(2)}`,
-        )
-        .join("\n");
+      // Save order to Firebase via API
+      await fetch("/api/send-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerInfo: {
+            fullName: formData.fullName,
+            phone: formData.phone,
+            email: formData.email || "N/A",
+            city: formData.city,
+            address: formData.address,
+            notes: formData.notes || "None",
+          },
+          cartItems: cartItems.map((item) => ({
+            id: item.id,
+            name: item.name,
+            price: item.price || 0,
+            quantity: item.quantity || 1,
+          })),
+          total: cartTotal,
+        }),
+      });
 
-      // Use environment variables
-      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-      const privateKey = process.env.NEXT_PUBLIC_EMAILJS_PRIVATE_KEY;
-      const sellerEmail = process.env.NEXT_PUBLIC_EMAIL;
+      setSubmitted(true);
+      setLoading(false);
 
-      console.log("📤 Sending order...");
-
-      const response = await fetch(
-        "https://api.emailjs.com/api/v1.0/email/send",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            service_id: serviceId,
-            template_id: templateId,
-            user_id: publicKey,
-            accessToken: privateKey,
-            template_params: {
-              email: sellerEmail,
-              subject: `New Order from ${formData.fullName} - Rs. ${cartTotal.toFixed(2)}`,
-              customer_name: formData.fullName,
-              customer_phone: formData.phone,
-              customer_email: formData.email || "N/A",
-              customer_city: formData.city,
-              customer_address: formData.address,
-              customer_notes: formData.notes || "None",
-              order_items: itemsList,
-              order_total: `Rs. ${cartTotal.toFixed(2)}`,
-            },
-          }),
-        },
-      );
-
-      if (response.ok) {
-        setSubmitted(true);
-        setLoading(false);
-
-        setTimeout(() => {
-          if (typeof clearCart === "function") clearCart();
-          if (typeof closeCart === "function") closeCart();
-          if (typeof onClose === "function") onClose();
-        }, 3000);
-      } else {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
+      setTimeout(() => {
+        if (typeof clearCart === "function") clearCart();
+        if (typeof closeCart === "function") closeCart();
+        if (typeof onClose === "function") onClose();
+      }, 3000);
     } catch (err) {
       console.error("Error:", err);
       setError("Failed to send order. Please try again.");
@@ -109,10 +85,22 @@ export default function CheckoutModal({ onClose, closeCart }) {
         className="modal-dialog modal-dialog-centered modal-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="modal-content">
+        <div
+          className="modal-content"
+          style={{
+            maxHeight: "90vh",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <div
             className="modal-header"
-            style={{ background: "var(--grad-primary)", color: "#fff" }}
+            style={{
+              background: "var(--grad-primary)",
+              color: "#fff",
+              flexShrink: 0,
+            }}
           >
             <h5
               className="modal-title"
@@ -128,7 +116,10 @@ export default function CheckoutModal({ onClose, closeCart }) {
             ></button>
           </div>
 
-          <div className="modal-body p-4">
+          <div
+            className="modal-body p-4"
+            style={{ overflowY: "auto", flex: 1 }}
+          >
             {submitted ? (
               <div className="text-center py-5">
                 <div className="mb-3">
@@ -146,7 +137,7 @@ export default function CheckoutModal({ onClose, closeCart }) {
                   Order Submitted Successfully!
                 </h4>
                 <p className="text-muted">
-                  Your order has been sent via Email.
+                  Your order has been sent. We will contact you shortly.
                 </p>
               </div>
             ) : (

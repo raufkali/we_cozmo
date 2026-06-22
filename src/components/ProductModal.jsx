@@ -10,6 +10,25 @@ export default function ProductModal({ product, onClose }) {
 
   if (!product) return null;
 
+  const handleAddToCart = () => {
+    addToCart(product, quantity);
+
+    // Track add to cart with quantity
+    fetch("/api/analytics", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        event: "add_to_cart",
+        productId: product.id,
+        productName: product.name,
+        price: product.price,
+        quantity,
+      }),
+    }).catch(() => {});
+
+    onClose();
+  };
+
   return (
     <div
       className="modal d-block product-modal"
@@ -50,22 +69,27 @@ export default function ProductModal({ product, onClose }) {
                   {product.category}
                 </span>
                 <div className="product-modal-price">
-                  ${product.price?.toFixed(2)}
+                  Rs. {product.price?.toFixed(2)}
                 </div>
+                {product.originalPrice && (
+                  <p className="text-muted text-decoration-line-through small">
+                    Rs. {product.originalPrice.toFixed(2)}
+                  </p>
+                )}
                 <p className="product-modal-description">
                   {product.description || "No description available."}
                 </p>
                 <p className="small text-muted">
-                  {product.inStock ? "✅ In Stock" : "❌ Out of Stock"}
+                  {product.inStock !== false ? "In Stock" : "Out of Stock"}
                 </p>
-                {product.inStock && (
+                {product.inStock !== false && (
                   <div className="d-flex gap-2 mt-3">
                     <div className="quantity-control">
                       <button
                         className="qty-btn"
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       >
-                        −
+                        -
                       </button>
                       <span className="qty-value">{quantity}</span>
                       <button
@@ -77,10 +101,7 @@ export default function ProductModal({ product, onClose }) {
                     </div>
                     <button
                       className="btn btn-primary flex-grow-1"
-                      onClick={() => {
-                        addToCart(product, quantity);
-                        onClose();
-                      }}
+                      onClick={handleAddToCart}
                     >
                       <i className="fas fa-shopping-bag me-1"></i> Add to Cart (
                       {quantity})
