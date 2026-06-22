@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { auth, db } from "@/lib/firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import "./AdminPanel.css";
 import {
   signInWithEmailAndPassword,
@@ -237,7 +237,22 @@ export default function AdminPage() {
     setShowProductModal(false);
     loadProducts();
   };
-
+  const handleDeleteOrder = async (orderId) => {
+    if (!confirm("Delete this order permanently? This cannot be undone."))
+      return;
+    setPageLoading(true);
+    try {
+      const { doc, deleteDoc } = await import("firebase/firestore");
+      await deleteDoc(doc(db, "orders", orderId));
+      showToast("Order deleted permanently", "success");
+      loadAnalytics();
+    } catch (err) {
+      console.error("Failed to delete order:", err);
+      showToast("Failed to delete order", "error");
+    } finally {
+      setPageLoading(false);
+    }
+  };
   const handleDeleteProduct = async (id) => {
     if (!confirm("Delete this product?")) return;
     setPageLoading(true);
@@ -991,6 +1006,7 @@ export default function AdminPage() {
           )}
 
           {/* ══════ ORDERS ══════ */}
+          {/* ══════ ORDERS ══════ */}
           {activeTab === "orders" && (
             <div>
               <div className="section-header">
@@ -1005,19 +1021,24 @@ export default function AdminPage() {
                   {analytics?.recentOrders?.length || 0} total orders
                 </p>
               </div>
+
+              {/* Filter Buttons */}
               <div className="filter-scroll" style={{ marginBottom: 18 }}>
-                {["all", "pending", "processing", "delivered"].map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => setOrderFilter(status)}
-                    className={`filter-btn ${orderFilter === status ? "active" : ""}`}
-                  >
-                    {status === "all"
-                      ? "All Orders"
-                      : status.charAt(0).toUpperCase() + status.slice(1)}
-                  </button>
-                ))}
+                {["all", "pending", "processing", "delivered", "cancelled"].map(
+                  (status) => (
+                    <button
+                      key={status}
+                      onClick={() => setOrderFilter(status)}
+                      className={`filter-btn ${orderFilter === status ? "active" : ""}`}
+                    >
+                      {status === "all"
+                        ? "All Orders"
+                        : status.charAt(0).toUpperCase() + status.slice(1)}
+                    </button>
+                  ),
+                )}
               </div>
+
               {analytics?.recentOrders?.length > 0 ? (
                 <div className="admin-order-list">
                   {analytics.recentOrders
@@ -1026,7 +1047,13 @@ export default function AdminPage() {
                         orderFilter === "all" || order.status === orderFilter,
                     )
                     .map((order, i) => (
-                      <div key={i} className="contact-card admin-order-item">
+                      <div
+                        key={i}
+                        className="contact-card admin-order-item"
+                        style={
+                          order.status === "cancelled" ? { opacity: 0.55 } : {}
+                        }
+                      >
                         <div className="admin-order-head">
                           <div>
                             <strong>
@@ -1049,40 +1076,55 @@ export default function AdminPage() {
                               gap: 8,
                             }}
                           >
-                            <select
-                              value={order.status || "pending"}
-                              onChange={(e) =>
-                                handleUpdateOrderStatus(
-                                  order.id,
-                                  e.target.value,
-                                )
-                              }
-                              style={{
-                                padding: "4px 24px 4px 8px",
-                                fontSize: "0.7rem",
-                                borderRadius: "var(--radius-sm)",
-                                border: "1.5px solid rgba(139,0,0,0.15)",
-                                background: "var(--white)",
-                                cursor: "pointer",
-                              }}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <option value="pending">Pending</option>
-                              <option value="processing">Processing</option>
-                              <option value="delivered">Delivered</option>
-                            </select>
-                            <span
-                              className={`admin-chip ${order.status === "pending" ? "admin-chip--pending" : "admin-chip--done"}`}
-                            >
-                              {order.status || "pending"}
-                            </span>
+                            {order.status !== "cancelled" &&
+                            order.status !== "delivered" ? (
+                              <select
+                                value={order.status || "pending"}
+                                onChange={(e) =>
+                                  handleUpdateOrderStatus(
+                                    order.id,
+                                    e.target.value,
+                                  )
+                                }
+                                style={{
+                                  padding: "4px 24px 4px 8px",
+                                  fontSize: "0.7rem",
+                                  borderRadius: "var(--radius-sm)",
+                                  border: "1.5px solid rgba(139,0,0,0.15)",
+                                  background: "var(--white)",
+                                  cursor: "pointer",
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <option value="pending">Pending</option>
+                                <option value="processing">Processing</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="cancelled">Cancelled</option>
+                              </select>
+                            ) : (
+                              <span
+                                className={`admin-chip ${order.status === "cancelled" ? "" : "admin-chip--done"}`}
+                                style={
+                                  order.status === "cancelled"
+                                    ? {
+                                        background: "rgba(231,76,60,0.1)",
+                                        color: "var(--crimson-light)",
+                                      }
+                                    : {}
+                                }
+                              >
+                                {order.status}
+                              </span>
+                            )}
                           </div>
                         </div>
+
                         <div className="admin-order-meta">
                           <span>{order.customer?.phone}</span>
                           <span>{order.customer?.city}</span>
                           <span>{order.date}</span>
                         </div>
+
                         {order.items && order.items.length > 0 && (
                           <div
                             style={{
@@ -1115,6 +1157,7 @@ export default function AdminPage() {
                             ))}
                           </div>
                         )}
+
                         {order.customer?.address && (
                           <p
                             className="admin-order-meta"
@@ -1134,15 +1177,43 @@ export default function AdminPage() {
                               )}
                           </p>
                         )}
-                        <p
-                          className="admin-order-total"
-                          style={{ marginTop: 8 }}
+
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginTop: 8,
+                          }}
                         >
-                          Total:{" "}
-                          <strong style={{ color: "var(--crimson)" }}>
-                            Rs. {(order.total || 0).toFixed(0)}
-                          </strong>
-                        </p>
+                          <p
+                            className="admin-order-total"
+                            style={{ margin: 0 }}
+                          >
+                            Total:{" "}
+                            <strong style={{ color: "var(--crimson)" }}>
+                              Rs. {(order.total || 0).toFixed(0)}
+                            </strong>
+                          </p>
+                          <button
+                            onClick={() => handleDeleteOrder(order.id)}
+                            className="admin-action-btn admin-action-delete"
+                            title="Delete Order"
+                            style={{ width: 28, height: 28 }}
+                          >
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <polyline points="3 6 5 6 21 6" />
+                              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
                     ))}
                 </div>
