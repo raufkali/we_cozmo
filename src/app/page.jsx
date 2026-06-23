@@ -123,7 +123,7 @@ export default function HomePage() {
     e.preventDefault();
     const message = `New Contact:%0A%0AName: ${contactForm.name}%0AEmail: ${contactForm.email}%0AMessage: ${contactForm.message}`;
     window.open(
-      `https://wa.me/${process.env.NEXT_PUBLIC_PHONE || "+923001234567"}?text=${message}`,
+      `https://wa.me/${process.env.NEXT_PUBLIC_PHONE || "+923436606652"}?text=${message}`,
       "_blank",
     );
     setContactForm({ name: "", email: "", message: "" });
@@ -408,9 +408,9 @@ export default function HomePage() {
                       <span className="contact-info-label">Phone</span>
                       <span className="contact-info-value">
                         <a
-                          href={`tel:${process.env.NEXT_PUBLIC_PHONE || "+923001234567"}`}
+                          href={`tel:${process.env.NEXT_PUBLIC_PHONE || "+923436606652"}`}
                         >
-                          {process.env.NEXT_PUBLIC_PHONE || "+923001234567"}
+                          {process.env.NEXT_PUBLIC_PHONE || "+923436606652"}
                         </a>
                       </span>
                     </div>

@@ -156,7 +156,8 @@ export default function CheckoutModal({ onClose, closeCart }) {
                       </span>
                       <span>
                         Rs.{" "}
-                        {((item.price || 0) * (item.quantity || 1)).toFixed(2)}
+                        {((item.price || 0) * (item.quantity || 1)).toFixed(2)}{" "}
+                        + Delivery Fee
                       </span>
                     </div>
                   ))}
@@ -164,7 +165,7 @@ export default function CheckoutModal({ onClose, closeCart }) {
                   <div className="d-flex justify-content-between">
                     <strong>Total</strong>
                     <strong style={{ color: "var(--crimson)" }}>
-                      Rs. {cartTotal.toFixed(2)}
+                      Rs. {cartTotal.toFixed(2)} + Delivery Fee
                     </strong>
                   </div>
                 </div>

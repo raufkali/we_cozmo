@@ -105,10 +105,11 @@ export default function CartSidebar() {
                           {item.name || "Product"}
                         </span>
                         <span className="cart-item-price">
-                          $
+                          PKR{" "}
                           {((item.price || 0) * (item.quantity || 1)).toFixed(
                             2,
-                          )}
+                          )}{" "}
+                          + Delivery Fee
                         </span>
 
                         <div className="cart-item-actions">
@@ -155,11 +156,12 @@ export default function CartSidebar() {
               <div className="cart-summary">
                 <div className="cart-total-row">
                   <span>Subtotal</span>
-                  <span>${(cartTotal || 0).toFixed(2)}</span>
+                  <span>PKR {(cartTotal || 0).toFixed(2)} + Delivery FEE</span>
                 </div>
                 <div className="cart-shipping-note mb-2">
-                  <i className="fas fa-truck"></i> Shipping calculated at
-                  checkout
+                  <i className="fas fa-truck"></i> Please note that this is not
+                  the final fee. The total amount, including delivery charges,
+                  will be calculated once we contact you.
                 </div>
                 <button
                   className="btn btn-primary w-100 checkout-btn"

@@ -28,6 +28,11 @@ export default function Footer() {
         </div>
 
         <hr className="footer-divider" />
+        <p className="footer-bottom text-center h1">
+          DEVELOPED & MAINTAINED BY RUFI BOY, CONTACT "ahmadraufbd@gmaill.com"
+        </p>
+        <hr className="footer-divider" />
+
         <p className="footer-bottom text-center mb-0">
           &copy; {new Date().getFullYear()} {brandName}. All rights reserved.
         </p>

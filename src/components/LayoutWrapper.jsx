@@ -8,7 +8,7 @@ import WhatsAppButton from "./WhatsAppButton";
 
 export default function LayoutWrapper({ children }) {
   const pathname = usePathname();
-  const isAdmin = pathname?.startsWith("/admin");
+  const isAdmin = pathname?.startsWith("/secret");
 
   useEffect(() => {
     import("bootstrap/dist/js/bootstrap.bundle");
