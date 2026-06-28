@@ -13,7 +13,7 @@ const nextConfig = {
   },
 
   // Allow network IP access in development
-  allowedDevOrigins: ["192.168.10.22", "localhost", "127.0.0.1"],
+  allowedDevOrigins: ["192.168.10.5", "localhost", "127.0.0.1"],
 
   // Enable API routes with CORS
   async headers() {

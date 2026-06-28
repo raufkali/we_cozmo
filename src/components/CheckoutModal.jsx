@@ -156,8 +156,9 @@ export default function CheckoutModal({ onClose, closeCart }) {
                       </span>
                       <span>
                         Rs.{" "}
-                        {((item.price || 0) * (item.quantity || 1)).toFixed(2)}{" "}
-                        + Delivery Fee
+                        {((item.price || 0) * (item.quantity || 1)).toFixed(
+                          2,
+                        )}{" "}
                       </span>
                     </div>
                   ))}

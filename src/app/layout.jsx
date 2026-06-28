@@ -11,7 +11,8 @@ import { CartProvider } from "@/context/CartContext";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import SmoothScrollProvider from "@/components/SmoothScroll";
 import { siteMeta } from "@/config/sitemeta";
-
+// import FloatingParticles from "@/components/FloatingParticles";
+import CartCelebration from "@/components/CartCelebration";
 export default function RootLayout({ children }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -101,7 +102,12 @@ export default function RootLayout({ children }) {
       <body suppressHydrationWarning>
         <CartProvider>
           <LayoutWrapper>
-            <SmoothScrollProvider>{children}</SmoothScrollProvider>
+            <SmoothScrollProvider>
+              {/* <FloatingParticles /> */}
+              <CartCelebration />
+
+              {children}
+            </SmoothScrollProvider>
           </LayoutWrapper>
         </CartProvider>
       </body>

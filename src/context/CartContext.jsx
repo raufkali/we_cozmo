@@ -59,20 +59,39 @@ export const CartProvider = ({ children }) => {
     }
   }, [cartItems, mounted]);
 
-  const addToCart = useCallback((product, quantity = 1) => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item,
-        );
-      }
-      return [...prev, { ...product, quantity }];
-    });
-    setIsOpen(true);
+  const triggerCelebration = useCallback(() => {
+    // Screen shake
+    document.body.classList.add("cart-shake");
+    setTimeout(() => document.body.classList.remove("cart-shake"), 400);
+
+    if (typeof window !== "undefined" && window.cartCelebrate) {
+      const x = window.innerWidth / 2;
+      const y = window.innerHeight / 2;
+      window.cartCelebrate(x, y);
+    }
   }, []);
+
+  const addToCart = useCallback(
+    (product, quantity = 1) => {
+      setCartItems((prev) => {
+        const existing = prev.find((item) => item.id === product.id);
+        if (existing) {
+          return prev.map((item) =>
+            item.id === product.id
+              ? { ...item, quantity: item.quantity + quantity }
+              : item,
+          );
+        }
+        return [...prev, { ...product, quantity }];
+      });
+
+      // 🎉 Trigger celebration
+      triggerCelebration();
+
+      setIsOpen(true);
+    },
+    [triggerCelebration],
+  );
 
   const removeFromCart = useCallback((id) => {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
