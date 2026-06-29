@@ -46,7 +46,6 @@ export default function Footer() {
             </p>
           </div>
           <div className="col-md-4 text-center text-md-end">
-            {/* Regular Sign In button - redirects to /secret */}
             <button
               onClick={handleSignIn}
               style={{

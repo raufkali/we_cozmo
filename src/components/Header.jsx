@@ -57,7 +57,6 @@ export default function Header() {
     applyTheme(savedTheme);
   }, []);
 
-  // Close theme dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -69,12 +68,10 @@ export default function Header() {
         setThemeOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close theme dropdown on scroll
   useEffect(() => {
     const handleScroll = () => {
       if (themeOpen) setThemeOpen(false);
@@ -102,14 +99,11 @@ export default function Header() {
       setThemeOpen(false);
       return;
     }
-
     setAnimatingTheme(themeId);
     setActiveTheme(themeId);
     applyTheme(themeId);
     localStorage.setItem("wecozmo-theme", themeId);
     setThemeOpen(false);
-
-    // Reset animation state after transition
     setTimeout(() => setAnimatingTheme(null), 600);
   };
 
@@ -122,9 +116,91 @@ export default function Header() {
 
   return (
     <>
-      <nav className="wc-navbar navbar navbar-expand-lg">
+      {/* ===== STICKY ICONS ROW (Mobile) ===== */}
+      <div className="sticky-icons-row">
+        <div className="sticky-icons-inner">
+          <button
+            className="navbar-toggler"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+
+          <button
+            ref={themeButtonRef}
+            className="theme-toggle-btn-mobile"
+            onClick={() => setThemeOpen(!themeOpen)}
+            aria-label="Change theme"
+          >
+            <i className={`fas ${activeThemeData.icon} theme-icon-pulse`}></i>
+          </button>
+
+          <button className="cart-btn" onClick={openCart}>
+            <i className="fas fa-shopping-bag"></i>
+            {mounted && cartCount > 0 && (
+              <span className="cart-badge">{cartCount}</span>
+            )}
+          </button>
+        </div>
+
+        {/* Menu Dropdown */}
+        <div className={`mobile-menu-drop ${menuOpen ? "show" : ""}`}>
+          <a
+            href="#home"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollTo("home");
+            }}
+          >
+            Home
+          </a>
+          <a
+            href="#products"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollTo("products");
+            }}
+          >
+            Products
+          </a>
+          <a
+            href="#about-contact"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollTo("about-contact");
+            }}
+          >
+            About
+          </a>
+          <a
+            href="#about-contact"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollTo("about-contact");
+            }}
+          >
+            Contact
+          </a>
+        </div>
+      </div>
+
+      {/* ===== BRAND (Mobile) ===== */}
+      <div className="mobile-brand">
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            scrollTo("home");
+          }}
+        >
+          {process.env.NEXT_PUBLIC_BRAND_NAME || "Reshine Cosmetics"}
+        </a>
+      </div>
+
+      {/* ===== DESKTOP NAVBAR ===== */}
+      <nav className="wc-navbar navbar navbar-expand-lg d-none d-lg-flex">
         <div className="container">
-          {/* Brand */}
           <a
             href="#"
             className="navbar-brand"
@@ -133,39 +209,10 @@ export default function Header() {
               scrollTo("home");
             }}
           >
-            {process.env.NEXT_PUBLIC_BRAND_NAME}
+            {process.env.NEXT_PUBLIC_BRAND_NAME || "Reshine Cosmetics"}
           </a>
 
-          {/* Mobile Actions */}
-          <div className="d-flex align-items-center gap-2 d-lg-none">
-            {/* Theme Toggle Mobile */}
-            <button
-              ref={themeButtonRef}
-              className="theme-toggle-btn-mobile"
-              onClick={() => setThemeOpen(!themeOpen)}
-              aria-label="Change theme"
-            >
-              <i className={`fas ${activeThemeData.icon} theme-icon-pulse`}></i>
-            </button>
-
-            <button className="cart-btn" onClick={openCart}>
-              <i className="fas fa-shopping-bag"></i>
-              {mounted && cartCount > 0 && (
-                <span className="cart-badge">{cartCount}</span>
-              )}
-            </button>
-
-            <button
-              className="navbar-toggler"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
-          </div>
-
-          {/* Nav Links */}
-          <div className={`collapse navbar-collapse${menuOpen ? " show" : ""}`}>
+          <div className="collapse navbar-collapse">
             <ul className="navbar-nav ms-auto gap-lg-1 align-items-lg-center">
               <li className="nav-item">
                 <a
@@ -216,8 +263,7 @@ export default function Header() {
                 </a>
               </li>
 
-              {/* Desktop Theme Switcher */}
-              <li className="nav-item d-none d-lg-block position-relative">
+              <li className="nav-item position-relative">
                 <button
                   ref={themeButtonRef}
                   className="theme-toggle-btn-desktop"
@@ -232,13 +278,10 @@ export default function Header() {
                   </span>
                   <span className="theme-btn-label">Theme</span>
                   <i
-                    className={`fas fa-chevron-down theme-chevron ${
-                      themeOpen ? "rotated" : ""
-                    }`}
+                    className={`fas fa-chevron-down theme-chevron ${themeOpen ? "rotated" : ""}`}
                   ></i>
                 </button>
 
-                {/* Theme Dropdown */}
                 <div
                   ref={themeDropdownRef}
                   className={`theme-dropdown ${themeOpen ? "show" : ""}`}
@@ -251,9 +294,7 @@ export default function Header() {
                     {themes.map((theme) => (
                       <button
                         key={theme.id}
-                        className={`theme-option ${
-                          activeTheme === theme.id ? "active" : ""
-                        } ${animatingTheme === theme.id ? "animating" : ""}`}
+                        className={`theme-option ${activeTheme === theme.id ? "active" : ""} ${animatingTheme === theme.id ? "animating" : ""}`}
                         onClick={() => handleThemeChange(theme.id)}
                       >
                         <span
@@ -280,8 +321,7 @@ export default function Header() {
                 </div>
               </li>
 
-              {/* Desktop Cart */}
-              <li className="nav-item d-none d-lg-flex">
+              <li className="nav-item">
                 <button className="cart-btn" onClick={openCart}>
                   <i className="fas fa-shopping-bag"></i>
                   {mounted && cartCount > 0 && (
@@ -318,9 +358,7 @@ export default function Header() {
           {themes.map((theme) => (
             <button
               key={theme.id}
-              className={`theme-mobile-option ${
-                activeTheme === theme.id ? "active" : ""
-              }`}
+              className={`theme-mobile-option ${activeTheme === theme.id ? "active" : ""}`}
               onClick={() => handleThemeChange(theme.id)}
             >
               <span

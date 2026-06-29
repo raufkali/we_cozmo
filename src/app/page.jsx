@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import ProductCard from "@/components/ProductCard";
 import ProductModal from "@/components/ProductModal";
+import Faqs from "@/components/Faqs";
 
 export default function HomePage() {
   const { addToCart } = useCart();
@@ -474,7 +475,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
+      <Faqs />
       {/* Product Modal */}
       {selectedProduct && (
         <ProductModal

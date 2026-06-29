@@ -1,29 +1,34 @@
-// config/sitemeta.js (NOT sitemeta.jsx, NOT siteMeta.js)
-const BRAND_NAME = process.env.NEXT_PUBLIC_BRAND_NAME || "WeCozmo";
+// config/sitemeta.js
+const BRAND_NAME = process.env.NEXT_PUBLIC_BRAND_NAME || "Reshine Cosmetics";
 const SITE_NAME =
-  process.env.NEXT_PUBLIC_SITE_NAME || `${BRAND_NAME} - Premium Skincare`;
+  process.env.NEXT_PUBLIC_SITE_NAME || `${BRAND_NAME} - Premium Beauty Store`;
 const SITE_DESCRIPTION =
-  process.env.NEXT_PUBLIC_SITE_DESCRIPTION ||
-  `Discover premium skincare and beauty products from ${BRAND_NAME}. Quality face creams, moisturizers, and beauty essentials for all skin types. Shop online in Pakistan.`;
-const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://wecozmo.com";
+  process.env.NEXT_PUBLIC_BRAND_DESCRIPTION ||
+  "Discover premium beauty, skincare, makeup, and cosmetic products at Reshine Cosmetics. Shop high-quality beauty essentials, skincare solutions, and makeup for every style with fast delivery and trusted quality.";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://reshinecosmetics.top";
 
-// Keywords for your website
+// SEO-optimized keywords for cosmetics store
 const SITE_KEYWORDS = [
   BRAND_NAME,
-  `${BRAND_NAME} skincare`,
-  `${BRAND_NAME} products`,
-  `${BRAND_NAME} Pakistan`,
-  "premium skincare",
-  "beauty products Pakistan",
-  "face cream",
-  "moisturizer",
-  "skincare routine",
-  "gold cream",
+  `${BRAND_NAME} cosmetics`,
+  `${BRAND_NAME} beauty products`,
+  "premium cosmetics Pakistan",
+  "skincare products online",
+  "makeup products",
+  "beauty essentials",
+  "cosmetics store",
+  "skincare solutions",
   "beauty cream",
-  "skin brightening",
-  "natural skincare",
-  "organic beauty products",
-  "skincare online Pakistan",
+  "face makeup",
+  "cosmetics online Pakistan",
+  "beauty store",
+  "makeup collection",
+  "skincare routine products",
+  "cosmetics brand",
+  "affordable makeup",
+  "luxury beauty products",
+  "beauty shopping online",
 ].join(", ");
 
 export const siteMeta = {
@@ -33,40 +38,36 @@ export const siteMeta = {
   siteUrl: SITE_URL,
   siteKeywords: SITE_KEYWORDS,
 
-  // Social Media (Uncomment when ready)
+  // Social Media Links
   // social: {
-  //   facebook: process.env.NEXT_PUBLIC_FACEBOOK_URL || "https://facebook.com/wecozmo",
-  //   instagram: process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com/wecozmo",
-  //   twitter: process.env.NEXT_PUBLIC_TWITTER_URL || "https://twitter.com/wecozmo",
-  //   youtube: process.env.NEXT_PUBLIC_YOUTUBE_URL || "https://youtube.com/wecozmo",
-  //   pinterest: process.env.NEXT_PUBLIC_PINTEREST_URL || "https://pinterest.com/wecozmo",
-  //   linkedin: process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://linkedin.com/company/wecozmo",
+  //   facebook:
+  //     process.env.NEXT_PUBLIC_FACEBOOK_URL ||
+  //     "https://facebook.com/reshinecosmetics",
+  //   instagram:
+  //     process.env.NEXT_PUBLIC_INSTAGRAM_URL ||
+  //     "https://instagram.com/reshinecosmetics",
+  //   twitter:
+  //     process.env.NEXT_PUBLIC_TWITTER_URL ||
+  //     "https://twitter.com/reshinecosmetics",
+  //   tiktok:
+  //     process.env.NEXT_PUBLIC_TIKTOK_URL ||
+  //     "https://tiktok.com/@reshinecosmetics",
   // },
 
-  // Contact
+  // Contact Information
   contact: {
-    email: process.env.NEXT_PUBLIC_EMAIL,
-    phone: process.env.NEXT_PUBLIC_PHONE,
+    email: process.env.NEXT_PUBLIC_EMAIL || "iqra.i.reshine@gmail.com",
+    phone: process.env.NEXT_PUBLIC_PHONE || "+923436606652",
     address: "Pakistan",
-    whatsapp: process.env.NEXT_PUBLIC_WHATSAPP,
+    whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || "+923436606652",
   },
 
-  // Default Images (Uncomment when ready)
-  // images: {
-  //   logo: "/images/logo.png",
-  //   favicon: "/favicon.ico",
-  //   ogImage: "/images/og-image.jpg",
-  //   twitterImage: "/images/twitter-image.jpg",
-  //   logoDark: "/images/logo-dark.png",
-  //   logoLight: "/images/logo-light.png",
-  // },
-
-  // Business Info (Uncomment when ready)
-  // business: {
-  //   type: "OnlineStore",
-  //   industry: "Skincare, Beauty",
-  //   country: "Pakistan",
-  //   city: "Lahore",
-  //   currency: "PKR",
-  // },
+  // Business Information
+  business: {
+    type: "OnlineStore",
+    name: BRAND_NAME,
+    industry: "Cosmetics, Skincare, Beauty",
+    country: "Pakistan",
+    currency: "PKR",
+  },
 };

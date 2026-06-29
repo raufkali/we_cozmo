@@ -1,89 +1,95 @@
-"use client";
-
+// app/layout.js - Server Component (NO "use client")
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "aos/dist/aos.css";
 import "./globals.css";
 
-import { useEffect } from "react";
-import AOS from "aos";
-import { CartProvider } from "@/context/CartContext";
-import LayoutWrapper from "@/components/LayoutWrapper";
-import SmoothScrollProvider from "@/components/SmoothScroll";
 import { siteMeta } from "@/config/sitemeta";
-// import FloatingParticles from "@/components/FloatingParticles";
-import CartCelebration from "@/components/CartCelebration";
+import ClientLayout from "@/components/ClientLayout";
+
+// ✅ Metadata export (without viewport/themeColor)
+export const metadata = {
+  title: `${siteMeta.siteName} | Premium Cosmetics, Skincare & Beauty Products`,
+  description: siteMeta.siteDescription,
+  keywords: siteMeta.siteKeywords,
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  metadataBase: new URL(siteMeta.siteUrl),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: siteMeta.siteName,
+    description: siteMeta.siteDescription,
+    url: siteMeta.siteUrl,
+    siteName: siteMeta.siteName,
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/images/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: siteMeta.siteName,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteMeta.siteName,
+    description: siteMeta.siteDescription,
+    images: ["/images/twitter-image.jpg"],
+    site: `@${siteMeta.brandName.toLowerCase()}`,
+    creator: `@${siteMeta.brandName.toLowerCase()}`,
+  },
+  applicationName: siteMeta.brandName,
+  authors: [{ name: siteMeta.brandName }],
+  generator: siteMeta.brandName,
+  formatDetection: {
+    telephone: false,
+  },
+  other: {
+    "geo.region": "PK",
+    "geo.country": "Pakistan",
+    language: "English",
+  },
+};
+
+// ✅ Viewport export (separate from metadata)
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#000000",
+};
+
 export default function RootLayout({ children }) {
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      AOS.init({
-        duration: 800,
-        easing: "ease-in-out",
-        once: true,
-        offset: 50,
-      });
-    }
-  }, []);
-
-  const { brandName, siteName, siteDescription, siteKeywords, siteUrl } =
-    siteMeta;
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* ========== TITLE & BASIC META TAGS ========== */}
-        <title>
-          {siteName} | Premium Beauty, Skincare & Cosmetic Products
-        </title>{" "}
-        <meta name="description" content={siteDescription} />
-        <meta name="keywords" content={siteKeywords} />
-        <meta name="robots" content="index, follow" />
-        {/* ========== BRAND META TAGS ========== */}
-        <meta name="brand" content={brandName} />
-        <meta name="application-name" content={brandName} />
-        <meta name="author" content={brandName} />
-        <meta name="generator" content={brandName} />
-        {/* ========== OPEN GRAPH / FACEBOOK ========== */}
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={siteName} />
-        <meta property="og:description" content={siteDescription} />
-        <meta property="og:url" content={siteUrl} />
-        <meta property="og:site_name" content={siteName} />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:image" content="/images/og-image.jpg" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        {/* ========== TWITTER ========== */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={siteName} />
-        <meta name="twitter:description" content={siteDescription} />
-        <meta name="twitter:image" content="/images/twitter-image.jpg" />
-        <meta name="twitter:site" content={`@${brandName.toLowerCase()}`} />
-        <meta name="twitter:creator" content={`@${brandName.toLowerCase()}`} />
-        {/* ========== CANONICAL URL ========== */}
-        <link rel="canonical" href={siteUrl} />
-        {/* ========== VIEWPORT & RESPONSIVE ========== */}
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=5"
-        />
-        <meta name="theme-color" content="#000000" />
-        <meta name="mobile-web-app-capable" content="yes" />
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+        {/* Apple Web App */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content={brandName} />
-        {/* ========== GEO & LANGUAGE ========== */}
-        <meta name="geo.region" content="PK" />
-        <meta name="geo.country" content="Pakistan" />
-        <meta name="language" content="English" />
-        <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta name="format-detection" content="telephone=no" />
-        {/* ========== ROBOTS ========== */}
-        <meta name="googlebot" content="index, follow" />
-        <meta name="bingbot" content="index, follow" />
-        {/* ========== FAVICON ========== */}
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        {/* ========== FONT AWESOME CDN ========== */}
+        <meta name="apple-mobile-web-app-title" content={siteMeta.brandName} />
+
+        {/* Preconnect to external resources */}
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+        <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+
+        {/* Font Awesome CDN */}
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -93,16 +99,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body suppressHydrationWarning>
-        <CartProvider>
-          <LayoutWrapper>
-            <SmoothScrollProvider>
-              {/* <FloatingParticles /> */}
-              <CartCelebration />
-
-              {children}
-            </SmoothScrollProvider>
-          </LayoutWrapper>
-        </CartProvider>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
