@@ -133,7 +133,7 @@ export default function Header() {
               scrollTo("home");
             }}
           >
-            WeCozmo
+            {process.env.NEXT_PUBLIC_BRAND_NAME}
           </a>
 
           {/* Mobile Actions */}
