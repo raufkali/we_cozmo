@@ -985,6 +985,7 @@ p {
   padding: 50px 0;
   background: var(--grad-primary);
   position: relative;
+  padding-bottom: 100px
 }
 
 .categories-section .section-label,
@@ -3044,4 +3045,48 @@ textarea.form-control::placeholder {
   .wc-navbar {
     display: none !important;
   }
+}
+
+.custom-shape-divider-bottom-1783792742 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.custom-shape-divider-bottom-1783792742 svg {
+  position: relative;
+  display: block;
+  width: calc(122% + 1.3px);
+  height: 84px;
+  transform: rotateY(180deg);
+}
+
+.custom-shape-divider-bottom-1783792742 .shape-fill {
+  fill: var(--bg-primary);
+}
+
+.custom-shape-divider-bottom-1783793628 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.custom-shape-divider-bottom-1783793628 svg {
+  position: relative;
+  display: block;
+  width: calc(187% + 1.3px);
+  height: 58px;
+  transform: rotateY(180deg);
+}
+
+.custom-shape-divider-bottom-1783793628 .shape-fill {
+  fill: var(--bg-primary) !important;
 }

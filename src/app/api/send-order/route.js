@@ -101,7 +101,6 @@ export async function POST(request) {
 
     console.log("📤 Sending order email to seller...");
 
-    // 📧 SEND EMAIL TO SELLER ONLY
     const emailData = {
       service_id: SERVICE_ID,
       template_id: TEMPLATE_ID,
