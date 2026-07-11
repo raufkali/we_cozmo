@@ -480,33 +480,30 @@ export default function AdminPage() {
         {toast && <Toast {...toast} onClose={() => setToast(null)} />}
         <div className="admin-login-card">
           <div className="section-header centered">
-            <span className="section-label">Administration</span>
             <h1 className="section-title" style={{ marginBottom: 4 }}>
-              WeCozmo
+              {process.env.NEXT_PUBLIC_BRAND_NAME}
             </h1>
-            <p className="section-subtitle">Secure Dashboard Access</p>
+            <p className="section-subtitle"></p>
           </div>
           {error && <div className="admin-error">{error}</div>}
           <form onSubmit={handleLogin} className="admin-login-form">
             <div className="form-group">
-              <label className="form-label">Email Address</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="form-control"
-                placeholder="admin@wecozmo.com"
+                placeholder="Enter your email"
                 required
               />
             </div>
             <div className="form-group">
-              <label className="form-label">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="form-control"
-                placeholder="••••••••"
+                placeholder="Enter your password"
                 required
               />
             </div>
@@ -519,9 +516,10 @@ export default function AdminPage() {
             </button>
           </form>
           <p className="admin-login-footer d-flex flex-column">
-            Authorized personnel only
             <a href="/">
-              <u>Back to Home</u>
+              <b>
+                <u>Back to Home</u>
+              </b>
             </a>
           </p>
         </div>

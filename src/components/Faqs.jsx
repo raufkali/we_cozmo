@@ -78,7 +78,7 @@ export default function FAQ() {
 
   return (
     <section id="faq" className="faq-section">
-      <div className="container">
+      <div className="container-fluid">
         <div className="section-header centered" data-aos="fade-up">
           <span className="section-label">Got Questions?</span>
           <h2 className="section-title">Frequently Asked Questions</h2>
