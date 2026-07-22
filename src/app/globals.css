@@ -676,6 +676,9 @@ p {
   color: var(--text-primary);
   margin-bottom: 10px;
   transition: color 0.4s ease;
+  animation: sideappear linear;
+  animation-timeline: view();
+  animation-range: entry 0% cover 30%
 }
 
 .section-title::after {
@@ -686,12 +689,18 @@ p {
   background: linear-gradient(90deg, var(--accent), var(--primary));
   margin: 12px auto 0;
   border-radius: 2px;
+  animation: sideappear linear;
+  animation-timeline: view();
+  animation-range: entry 0% cover 30%
 }
 
 .section-subtitle {
   font-size: 0.9rem;
   color: var(--text-muted);
   font-weight: 300;
+  animation: sideappear linear;
+  animation-timeline: view();
+  animation-range: entry 0% cover 30%
 }
 
 /* ════════════════════════════════════════════════════════
@@ -895,6 +904,7 @@ p {
   right: 8%;
   text-align: left;
   border: 1px solid var(--glass-border);
+
 }
 
 .hero-carousel .carousel-caption h3 {
@@ -903,6 +913,7 @@ p {
   font-weight: 700;
   margin-bottom: 0.5rem;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+
 }
 
 .hero-carousel .carousel-caption p {
@@ -992,6 +1003,9 @@ p {
 .categories-section .section-title,
 .categories-section .section-subtitle {
   color: var(--text-on-primary);
+  animation: sideappear linear;
+  animation-timeline: view();
+  animation-range: entry 0% cover 30%
 }
 
 .categories-section .section-title::after {
@@ -1016,8 +1030,23 @@ p {
   text-decoration: none;
   cursor: pointer;
   display: block;
+  animation: appear linear;
+  animation-timeline: view();
+  animation-range: entry 0% cover 30%
 }
 
+@keyframes sideappear {
+  from {
+    transform: scale(2, 2);
+    opacity: 0%;
+  }
+
+  to {
+    transform: translate(1, 1);
+    opacity: 100%;
+
+  }
+}
 
 .category-image-wrapper {
   position: relative;
@@ -1215,6 +1244,23 @@ p {
   transition: all var(--transition) !important;
   overflow: hidden;
   cursor: pointer;
+  animation: appear linear;
+  animation-timeline: view();
+  animation-range: entry 0% cover 30%
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: scale(0, 0);
+
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1, 1);
+
+  }
 }
 
 .product-card:hover {
@@ -1352,6 +1398,9 @@ p {
   padding: 50px 0;
   background: var(--bg-primary);
   transition: background 0.4s ease;
+  animation: appear linear;
+  animation-timeline: view();
+  animation-range: entry 0% cover 30%
 }
 
 .about-content {
@@ -1360,6 +1409,7 @@ p {
   border-radius: var(--radius-lg);
   color: var(--text-on-primary) !important;
   height: 100%;
+
 }
 
 .about-content .section-label {
@@ -1368,6 +1418,7 @@ p {
 
 .about-content .section-title {
   color: var(--text-on-primary);
+
 }
 
 .about-content .section-title::after {
@@ -1418,6 +1469,9 @@ p {
   border: 1px solid var(--border-color);
   height: 100%;
   transition: all 0.4s ease;
+  animation: appear linear;
+  animation-timeline: view();
+  animation-range: entry 0% cover 30%
 }
 
 .contact-info-item {
@@ -1675,6 +1729,7 @@ p {
     top 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     transform 0.2s ease,
     box-shadow 0.2s ease;
+
 }
 
 .whatsapp-fab::before {
@@ -2537,11 +2592,13 @@ textarea.form-control::placeholder {
    ════════════════════════════════════════════════════════ */
 
 .faq-section {
+
   padding: 80px 0;
   background: var(--bg-primary);
   position: relative;
   overflow: hidden;
   transition: background 0.4s ease;
+  animation: appear linear;
 }
 
 /* Decorative background pattern */
@@ -2580,6 +2637,7 @@ textarea.form-control::placeholder {
   gap: 12px;
   position: relative;
   z-index: 1;
+
 }
 
 /* FAQ Item */
@@ -2590,6 +2648,7 @@ textarea.form-control::placeholder {
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: var(--shadow-sm);
+
 }
 
 .faq-item:hover {
@@ -2616,6 +2675,7 @@ textarea.form-control::placeholder {
   font-family: var(--font-body);
   color: var(--text-primary);
   transition: all 0.3s ease;
+
 }
 
 .faq-question:hover {
