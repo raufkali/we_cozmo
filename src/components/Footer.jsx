@@ -63,7 +63,7 @@ export default function Footer() {
 
         {/* Middle Section - Credit + Sign In */}
         <div className="row align-items-center g-3">
-          <div className="col-md-8">
+          {/* <div className="col-md-8">
             <div className="footer-credit-wrapper">
               <span className="footer-credit-icon">
                 <i className="fas fa-code"></i>
@@ -81,8 +81,8 @@ export default function Footer() {
                 ahmadraufbd@gmail.com
               </a>
             </div>
-          </div>
-          <div className="col-md-4 text-center text-md-end">
+          </div> */}
+          <div className="col-md-12 text-center text-md-center">
             <button onClick={handleSignIn} className="footer-signin-btn">
               <i
                 className="fas fa-lock"
