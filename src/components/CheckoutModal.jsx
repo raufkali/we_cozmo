@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
+import { generateOrderMessage, cleanPhoneNumber } from "@/utils/helpers";
 
 export default function CheckoutModal({ onClose, closeCart }) {
   const { cartItems, getCartTotal, clearCart } = useCart();
@@ -19,6 +20,7 @@ export default function CheckoutModal({ onClose, closeCart }) {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [whatsappLink, setWhatsappLink] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,43 +37,60 @@ export default function CheckoutModal({ onClose, closeCart }) {
     setLoading(true);
     setError("");
 
+    const orderData = {
+      customerInfo: {
+        fullName: formData.fullName,
+        phone: formData.phone,
+        email: formData.email || "N/A",
+        city: formData.city,
+        address: formData.address,
+        notes: formData.notes || "None",
+      },
+      cartItems: cartItems.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price || 0,
+        quantity: item.quantity || 1,
+      })),
+      total: cartTotal,
+    };
+
+    // Construct WhatsApp message and URL
+    const message = generateOrderMessage(orderData);
+    const sellerPhone = cleanPhoneNumber(
+      process.env.NEXT_PUBLIC_PHONE || "03492000050",
+    );
+    const whatsappUrl = `https://wa.me/${sellerPhone}?text=${encodeURIComponent(message)}`;
+    setWhatsappLink(whatsappUrl);
+
+    // Save order to Firebase via API
     try {
-      // Save order to Firebase via API
-      await fetch("/api/send-order", {
+      fetch("/api/send-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customerInfo: {
-            fullName: formData.fullName,
-            phone: formData.phone,
-            email: formData.email || "N/A",
-            city: formData.city,
-            address: formData.address,
-            notes: formData.notes || "None",
-          },
-          cartItems: cartItems.map((item) => ({
-            id: item.id,
-            name: item.name,
-            price: item.price || 0,
-            quantity: item.quantity || 1,
-          })),
-          total: cartTotal,
-        }),
+        body: JSON.stringify(orderData),
+        keepalive: true,
+      }).catch((err) => {
+        console.error("Order save error:", err);
       });
-
-      setSubmitted(true);
-      setLoading(false);
-
-      setTimeout(() => {
-        if (typeof clearCart === "function") clearCart();
-        if (typeof closeCart === "function") closeCart();
-        if (typeof onClose === "function") onClose();
-      }, 3000);
     } catch (err) {
-      console.error("Error:", err);
-      setError("Failed to send order. Please try again.");
-      setLoading(false);
+      console.error("Order save error:", err);
     }
+
+    setSubmitted(true);
+    setLoading(false);
+
+    // Redirect to WhatsApp chat
+    const win = window.open(whatsappUrl, "_blank");
+    if (!win || win.closed || typeof win.closed === "undefined") {
+      window.location.href = whatsappUrl;
+    }
+
+    setTimeout(() => {
+      if (typeof clearCart === "function") clearCart();
+      if (typeof closeCart === "function") closeCart();
+      if (typeof onClose === "function") onClose();
+    }, 5000);
   };
 
   return (
@@ -137,8 +156,23 @@ export default function CheckoutModal({ onClose, closeCart }) {
                   Order Submitted Successfully!
                 </h4>
                 <p className="text-muted">
-                  Your order has been sent. We will contact you shortly.
+                  Your order has been placed. Redirecting to WhatsApp to send product details...
                 </p>
+                {whatsappLink && (
+                  <a
+                    href={whatsappLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-success mt-2 px-4 py-2"
+                    style={{
+                      backgroundColor: "#25d366",
+                      borderColor: "#25d366",
+                    }}
+                  >
+                    <i className="fab fa-whatsapp me-2"></i>
+                    Send Order via WhatsApp
+                  </a>
+                )}
               </div>
             ) : (
               <>

@@ -68,10 +68,10 @@ export const siteMeta = {
 
   // Contact Information
   contact: {
-    email: process.env.NEXT_PUBLIC_EMAIL || "iqra.i.reshine@gmail.com",
-    phone: process.env.NEXT_PUBLIC_PHONE || "+923436606652",
+    email: process.env.NEXT_PUBLIC_EMAIL || "hizb889090@gmail.com",
+    phone: process.env.NEXT_PUBLIC_PHONE || "03492000050",
     address: "Pakistan",
-    whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || "+923436606652",
+    whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || "923492000050",
   },
 
   // Business Information

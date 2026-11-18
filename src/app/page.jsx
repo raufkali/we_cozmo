@@ -6,6 +6,7 @@ import { useCart } from "@/context/CartContext";
 import ProductCard from "@/components/ProductCard";
 import ProductModal from "@/components/ProductModal";
 import Faqs from "@/components/Faqs";
+import { cleanPhoneNumber } from "@/utils/helpers";
 
 export default function HomePage() {
   const { addToCart } = useCart();
@@ -123,8 +124,9 @@ export default function HomePage() {
   const handleContactSubmit = (e) => {
     e.preventDefault();
     const message = `New Contact:%0A%0AName: ${contactForm.name}%0AEmail: ${contactForm.email}%0AMessage: ${contactForm.message}`;
+    const cleanPhone = cleanPhoneNumber(process.env.NEXT_PUBLIC_PHONE || "03492000050");
     window.open(
-      `https://wa.me/${process.env.NEXT_PUBLIC_PHONE || "+923436606652"}?text=${message}`,
+      `https://wa.me/${cleanPhone}?text=${message}`,
       "_blank",
     );
     setContactForm({ name: "", email: "", message: "" });
@@ -406,10 +408,10 @@ export default function HomePage() {
                       <span className="contact-info-label">Email</span>
                       <span className="contact-info-value">
                         <a
-                          href={`mailto:${process.env.NEXT_PUBLIC_EMAIL || "seller@wecozmo.com"}`}
+                          href={`mailto:${process.env.NEXT_PUBLIC_EMAIL || "hizb889090@gmail.com"}`}
                         >
                           {process.env.NEXT_PUBLIC_EMAIL ||
-                            "seller@wecozmo.com"}
+                            "hizb889090@gmail.com"}
                         </a>
                       </span>
                     </div>
@@ -422,9 +424,9 @@ export default function HomePage() {
                       <span className="contact-info-label">Phone</span>
                       <span className="contact-info-value">
                         <a
-                          href={`tel:${process.env.NEXT_PUBLIC_PHONE || "+923436606652"}`}
+                          href={`tel:${process.env.NEXT_PUBLIC_PHONE || "03492000050"}`}
                         >
-                          {process.env.NEXT_PUBLIC_PHONE || "+923436606652"}
+                          {process.env.NEXT_PUBLIC_PHONE || "03492000050"}
                         </a>
                       </span>
                     </div>

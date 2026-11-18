@@ -142,7 +142,7 @@ export default function FAQ() {
               </p>
             </div>
             <a
-              href="https://wa.me/923436606652"
+              href="https://wa.me/923492000050"
               target="_blank"
               rel="noopener noreferrer"
               className="faq-cta-btn"

@@ -1,9 +1,10 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { cleanPhoneNumber } from "@/utils/helpers";
 
 export default function WhatsAppButton() {
-  const phoneNumber = process.env.NEXT_PUBLIC_PHONE || "+923001234567";
-  const cleanPhone = phoneNumber.replace(/[\s\+\-\(\)]/g, "");
+  const phoneNumber = process.env.NEXT_PUBLIC_PHONE || "03492000050";
+  const cleanPhone = cleanPhoneNumber(phoneNumber);
   const message = "Hi! I have a question about your products.";
 
   const buttonRef = useRef(null);
