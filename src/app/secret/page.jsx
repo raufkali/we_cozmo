@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { auth, db } from "@/lib/firebase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import "./AdminPanel.css";
+import DescriptionEditor from "@/components/DescriptionEditor";
 import {
   signInWithEmailAndPassword,
   signOut,
@@ -1348,17 +1349,14 @@ export default function AdminPage() {
                   />
                 </div>
                 <div className="admin-form-full">
-                  <label className="form-label">Description</label>
-                  <textarea
+                  <DescriptionEditor
                     value={productForm.description}
-                    onChange={(e) =>
+                    onChange={(desc) =>
                       setProductForm({
                         ...productForm,
-                        description: e.target.value,
+                        description: desc,
                       })
                     }
-                    className="form-control"
-                    rows={3}
                   />
                 </div>
               </div>
