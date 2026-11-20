@@ -543,7 +543,7 @@ export default function AdminPage() {
           <span />
         </button>
         <span className="admin-brand">
-          WeCozmo <small>Admin</small>
+          ReshineCosmetics <small>Admin</small>
         </span>
         <div className="admin-header-actions">
           <span className="admin-user-email">{user.email}</span>
